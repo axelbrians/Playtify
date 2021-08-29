@@ -10,6 +10,7 @@ import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.machina.playtify.core.Constants
+import com.machina.playtify.player.callback.MusicPlayerNotificationListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,6 +30,8 @@ class MediaPlaybackService: MediaBrowserServiceCompat() {
     @Inject
     lateinit var exoPlayer: SimpleExoPlayer
 
+    private lateinit var musicNotificationManager: MusicNotificationManager
+
     // Define custom coroutineScope scoped in this service
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
@@ -36,6 +39,8 @@ class MediaPlaybackService: MediaBrowserServiceCompat() {
     private lateinit var mediaSession: MediaSessionCompat
     private lateinit var mediaSessionConnector: MediaSessionConnector
     private lateinit var stateBuilder: PlaybackStateCompat.Builder
+
+    var isForegroundService = false
 
     override fun onCreate() {
         super.onCreate()
@@ -50,6 +55,13 @@ class MediaPlaybackService: MediaBrowserServiceCompat() {
         }
 
         sessionToken = mediaSession.sessionToken
+        musicNotificationManager = MusicNotificationManager(
+            this,
+            mediaSession.sessionToken,
+            MusicPlayerNotificationListener(this),
+        ) {
+
+        }
 
         mediaSessionConnector = MediaSessionConnector(mediaSession)
         mediaSessionConnector.setPlayer(exoPlayer)
