@@ -7,4 +7,14 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="green_active">#20B557</color>
+    <color name="green_deactivated">#154D2A</color>
+    <color name="black_statusbar">#0A0A0A</color>
+    <color name="black_background">#121212</color>
+    <color name="black_grid">#2A2A2A</color>
+    <color name="grey_track">#3D3D3D</color>
+    <color name="grey_deactivated">#A7A7A7</color>
+    <color name="grey_track_halo">#505050</color>
+    <color name="grey_background">#282828</color>
 </resources>
