@@ -28,6 +28,8 @@ object Constants {
         )
     )
 
+    const val MEDIA_SESSION_TAG = "playtify_media_session"
+    const val MY_MEDIA_ROOT_ID = "my_media_root_id"
     const val BASE_SONGS_COLLECTION = "songs"
     const val NOTIFICATION_CHANNEL_ID = "playtify_notification_channel"
     const val NOTIFICATION_ID = 1

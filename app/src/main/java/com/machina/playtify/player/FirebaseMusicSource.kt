@@ -58,7 +58,7 @@ class FirebaseMusicSource @Inject constructor(
         return concatenatingMediaSource
     }
 
-    fun asMediaItems(): List<MediaBrowserCompat.MediaItem> = songs.map { song ->
+    fun asMediaItems(): MutableList<MediaBrowserCompat.MediaItem> = songs.map { song ->
         val desc = MediaDescriptionCompat.Builder()
             .setMediaId(song.description.mediaId)
             .setTitle(song.description.title)
@@ -68,7 +68,7 @@ class FirebaseMusicSource @Inject constructor(
             .setIconUri(song.description.iconUri)
             .build()
         MediaBrowserCompat.MediaItem(desc, FLAG_PLAYABLE)
-    }
+    }.toMutableList()
 
 
 
