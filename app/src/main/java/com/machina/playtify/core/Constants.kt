@@ -27,4 +27,8 @@ object Constants {
             MediaBrowserCompat.MediaItem.FLAG_PLAYABLE
         )
     )
+
+    const val BASE_SONGS_COLLECTION = "songs"
+    const val NOTIFICATION_CHANNEL_ID = "playtify_notification_channel"
+    const val NOTIFICATION_ID = 1
 }

@@ -1,4 +1,4 @@
-package com.machina.playtify.exoplayer
+package com.machina.playtify.player
 
 import android.app.PendingIntent
 import android.os.Bundle
