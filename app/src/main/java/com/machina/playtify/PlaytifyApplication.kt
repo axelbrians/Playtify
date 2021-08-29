@@ -5,9 +5,6 @@ import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber.*
 import timber.log.Timber
 
-
-
-
 @HiltAndroidApp
 class PlaytifyApplication: Application() {
 
@@ -15,8 +12,6 @@ class PlaytifyApplication: Application() {
         super.onCreate()
         if (BuildConfig.DEBUG) {
             Timber.plant(DebugTree())
-        } else {
-            Timber.plant(Forest)
         }
     }
 }
