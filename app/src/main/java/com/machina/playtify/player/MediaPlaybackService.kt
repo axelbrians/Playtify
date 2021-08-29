@@ -16,6 +16,7 @@ import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator
 import com.machina.playtify.core.Constants.MEDIA_SESSION_TAG
 import com.machina.playtify.core.Constants.MY_MEDIA_ROOT_ID
+import com.machina.playtify.core.Constants.NETWORK_ERROR
 import com.machina.playtify.player.callback.MusicPlaybackPreparer
 import com.machina.playtify.player.callback.MusicPlayerEventListener
 import com.machina.playtify.player.callback.MusicPlayerNotificationListener
@@ -158,6 +159,7 @@ class MediaPlaybackService: MediaBrowserServiceCompat() {
                             isPLayerInitialized = true
                         }
                     } else {
+                        mediaSession.sendSessionEvent(NETWORK_ERROR, null)
                         result.sendResult(null)
                     }
                 }
