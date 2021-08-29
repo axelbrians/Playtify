@@ -2,6 +2,7 @@
 buildscript {
     ext.hilt_version = '2.38.1'
     ext.nav_version = '2.3.5'
+    ext.exoplayer_version = '2.15.0'
 
     repositories {
         google()
@@ -17,6 +18,8 @@ buildscript {
         // Hilt
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
+        classpath 'com.google.gms:google-services:4.3.10'
+
     }
 }
 
