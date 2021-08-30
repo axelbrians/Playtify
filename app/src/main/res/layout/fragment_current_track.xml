@@ -3,34 +3,87 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/fragment_detail_track_container"
+    android:id="@+id/fragment_current_track_container"
     android:background="@color/grey_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
     <ImageView
-        android:id="@+id/fragment_detail_track_image"
+        android:id="@+id/fragment_current_track_arrow_down"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="12dp"
+        android:src="@drawable/ic_baseline_keyboard_arrow_down_24"
+        app:layout_constraintBottom_toBottomOf="@+id/fragment_current_track_info_container"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/fragment_current_track_info_container"
+        app:tint="@color/white" />
+
+    <LinearLayout
+        android:id="@+id/fragment_current_track_info_container"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginHorizontal="24dp"
-        android:src="@color/green_active"
-        app:layout_constraintBottom_toTopOf="@+id/fragment_detail_track_control_container"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="52dp"
+        android:layout_marginTop="12dp"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/fragment_current_track_playlist_source"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="playing from playlist"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textSize="11sp" />
+
+        <TextView
+            android:id="@+id/fragment_current_track_playlist_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="My Playlist"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_baseline_more_vert_24"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintBottom_toBottomOf="@+id/fragment_current_track_info_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/fragment_current_track_info_container"
+        app:tint="@color/white" />
+
+    <ImageView
+        android:id="@+id/fragment_current_track_image"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="32dp"
+        android:src="@color/green_active"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintBottom_toTopOf="@+id/fragment_current_track_control_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_current_track_info_container" />
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/fragment_detail_track_control_container"
+        android:id="@+id/fragment_current_track_control_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:paddingBottom="20dp"
+        android:layout_marginHorizontal="24dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
-            android:id="@+id/fragment_detail_track_text_container"
+            android:id="@+id/fragment_current_track_text_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -39,6 +92,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
+                android:id="@+id/fragment_current_track_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
@@ -47,6 +101,7 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/fragment_current_track_subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TAEYEON"
@@ -60,133 +115,131 @@
             android:layout_height="24dp"
             android:src="@drawable/ic_heart"
             android:layout_marginEnd="12dp"
-            app:layout_constraintBottom_toBottomOf="@+id/fragment_detail_track_text_container"
+            app:layout_constraintBottom_toBottomOf="@+id/fragment_current_track_text_container"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/fragment_detail_track_text_container"
+            app:layout_constraintTop_toTopOf="@+id/fragment_current_track_text_container"
             app:tint="@color/white" />
 
-        <com.google.android.material.slider.Slider
-            android:id="@+id/fragment_detail_track_slider"
+        <SeekBar
+            android:id="@+id/fragment_current_track_slider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:value="95"
-            android:valueFrom="0"
-            android:valueTo="163"
-            app:haloColor="@color/grey_track_halo"
-            app:haloRadius="14dp"
-            app:labelBehavior="gone"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_detail_track_text_container"
+            android:layout_marginTop="16dp"
+            android:max="100"
+            android:progress="20"
+            android:thumbTint="@color/white"
+            android:progressTint="@color/white"
+            android:progressBackgroundTint="@color/grey_track_halo"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_current_track_text_container"
             app:thumbColor="@color/white"
-            app:thumbRadius="5dp"
-            app:trackColorActive="@color/white"
-            app:trackColorInactive="#393939"
             tools:layout_editor_absoluteX="14dp" />
 
         <TextView
-            android:id="@+id/fragment_detail_track_elapsed"
+            android:id="@+id/fragment_current_track_elapsed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:text="1:35"
             android:textSize="13sp"
             android:textColor="@color/grey_deactivated"
-            app:layout_constraintBottom_toBottomOf="@+id/fragment_detail_track_slider"
-            app:layout_constraintStart_toStartOf="@+id/fragment_detail_track_slider" />
+            app:layout_constraintTop_toBottomOf="@+id/fragment_current_track_slider"
+            app:layout_constraintStart_toStartOf="@+id/fragment_current_track_slider" />
 
         <TextView
-            android:id="@+id/fragment_detail_track_total_time"
+            android:id="@+id/fragment_current_track_total_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="12dp"
             android:text="2:43"
             android:textSize="13sp"
             android:textColor="@color/grey_deactivated"
-            app:layout_constraintBottom_toBottomOf="@+id/fragment_detail_track_slider"
-            app:layout_constraintEnd_toEndOf="@+id/fragment_detail_track_slider" />
+            app:layout_constraintTop_toBottomOf="@+id/fragment_current_track_slider"
+            app:layout_constraintEnd_toEndOf="@+id/fragment_current_track_slider" />
 
         <ImageView
-            android:id="@+id/fragment_detail_track_shuffle"
+            android:id="@+id/fragment_current_track_shuffle"
             android:layout_width="26dp"
             android:layout_height="26dp"
             android:layout_marginStart="12dp"
             android:src="@drawable/ic_shuffle"
-            app:layout_constraintBottom_toBottomOf="@+id/fragment_detail_track_play"
+            app:layout_constraintBottom_toBottomOf="@+id/fragment_current_track_playback_control"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_detail_track_slider"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_current_track_slider"
             app:tint="@color/grey_deactivated" />
 
         <ImageView
-            android:id="@+id/fragment_detail_track_shuffle_dot"
+            android:id="@+id/fragment_current_track_shuffle_dot"
             android:layout_width="5dp"
             android:layout_height="5dp"
             android:src="@drawable/bg_green_circle"
             android:visibility="invisible"
-            app:layout_constraintEnd_toEndOf="@+id/fragment_detail_track_shuffle"
-            app:layout_constraintStart_toStartOf="@+id/fragment_detail_track_shuffle"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_detail_track_shuffle" />
+            app:layout_constraintEnd_toEndOf="@+id/fragment_current_track_shuffle"
+            app:layout_constraintStart_toStartOf="@+id/fragment_current_track_shuffle"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_current_track_shuffle" />
 
         <ImageView
-            android:id="@+id/fragment_detail_track_previous"
+            android:id="@+id/fragment_current_track_previous"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginStart="12dp"
             android:src="@drawable/ic_baseline_skip_previous_24"
-            app:layout_constraintBottom_toBottomOf="@+id/fragment_detail_track_play"
-            app:layout_constraintEnd_toStartOf="@+id/fragment_detail_track_play"
-            app:layout_constraintStart_toEndOf="@+id/fragment_detail_track_shuffle"
-            app:layout_constraintTop_toTopOf="@+id/fragment_detail_track_play"
+            app:layout_constraintBottom_toBottomOf="@+id/fragment_current_track_playback_control"
+            app:layout_constraintEnd_toStartOf="@+id/fragment_current_track_playback_control"
+            app:layout_constraintStart_toEndOf="@+id/fragment_current_track_shuffle"
+            app:layout_constraintTop_toTopOf="@+id/fragment_current_track_playback_control"
             app:tint="@color/white" />
 
         <ImageView
-            android:id="@+id/fragment_detail_track_play"
+            android:id="@+id/fragment_current_track_playback_control"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/ic_play_circle"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/ic_play_circle_white"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/fragment_detail_track_slider"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_detail_track_slider"
-            app:tint="@color/white" />
+            app:layout_constraintStart_toStartOf="@+id/fragment_current_track_slider"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_current_track_slider"/>
 
         <ImageView
-            android:id="@+id/fragment_detail_track_next"
+            android:id="@+id/fragment_current_track_next"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginEnd="12dp"
             android:src="@drawable/ic_baseline_skip_next_24"
-            app:layout_constraintBottom_toBottomOf="@+id/fragment_detail_track_play"
-            app:layout_constraintEnd_toStartOf="@+id/fragment_detail_track_repeat"
-            app:layout_constraintStart_toEndOf="@+id/fragment_detail_track_play"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_detail_track_slider"
+            app:layout_constraintBottom_toBottomOf="@+id/fragment_current_track_playback_control"
+            app:layout_constraintEnd_toStartOf="@+id/fragment_current_track_repeat"
+            app:layout_constraintStart_toEndOf="@+id/fragment_current_track_playback_control"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_current_track_slider"
             app:tint="@color/white" />
 
         <ImageView
-            android:id="@+id/fragment_detail_track_repeat"
+            android:id="@+id/fragment_current_track_repeat"
             android:layout_width="26dp"
             android:layout_height="26dp"
             android:layout_marginEnd="12dp"
             android:src="@drawable/ic_repeat"
             app:tint="@color/white"
-            app:layout_constraintBottom_toBottomOf="@+id/fragment_detail_track_play"
+            app:layout_constraintBottom_toBottomOf="@+id/fragment_current_track_playback_control"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_detail_track_slider" />
+            app:layout_constraintTop_toBottomOf="@+id/fragment_current_track_slider" />
 
         <ImageView
-            android:id="@+id/fragment_detail_track_device"
+            android:id="@+id/fragment_current_track_device"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginVertical="16dp"
             android:src="@drawable/ic_device"
-            app:layout_constraintStart_toStartOf="@+id/fragment_detail_track_shuffle"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_detail_track_play"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/fragment_current_track_shuffle"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_current_track_playback_control"
             app:tint="@color/grey_deactivated" />
 
         <ImageView
-            android:id="@+id/fragment_detail_track_queue"
+            android:id="@+id/fragment_current_track_queue"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:src="@drawable/ic_audio_queue"
-            app:layout_constraintEnd_toEndOf="@+id/fragment_detail_track_repeat"
-            app:layout_constraintTop_toTopOf="@+id/fragment_detail_track_device"
+            app:layout_constraintEnd_toEndOf="@+id/fragment_current_track_repeat"
+            app:layout_constraintTop_toTopOf="@+id/fragment_current_track_device"
             app:tint="@color/white" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

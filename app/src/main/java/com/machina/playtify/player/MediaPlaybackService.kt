@@ -9,11 +9,13 @@ import android.support.v4.media.MediaBrowserCompat.MediaItem
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.MediaMetadataCompat
 import androidx.media.MediaBrowserServiceCompat
+import androidx.navigation.NavDeepLinkBuilder
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator
+import com.machina.playtify.R
 import com.machina.playtify.core.Constants.MEDIA_SESSION_TAG
 import com.machina.playtify.core.Constants.MY_MEDIA_ROOT_ID
 import com.machina.playtify.core.Constants.NETWORK_ERROR
@@ -22,6 +24,7 @@ import com.machina.playtify.player.callback.MusicPlayerEventListener
 import com.machina.playtify.player.callback.MusicPlayerNotificationListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -68,9 +71,14 @@ class MediaPlaybackService: MediaBrowserServiceCompat() {
         }
 
         // Define pending intent to open our Launch Activity upon clicking on notification service
-        val activityIntent = packageManager?.getLaunchIntentForPackage(packageName)?.let {
-            PendingIntent.getActivity(this, 0, it, 0)
-        }
+//        val activityIntent = packageManager?.getLaunchIntentForPackage(packageName)?.let {
+//            PendingIntent.getActivity(this, 0, it, 0)
+//        }
+
+        val activityIntent = NavDeepLinkBuilder(this)
+            .setGraph(R.navigation.main_navigation)
+            .setDestination(R.id.currentTrackFragment)
+            .createPendingIntent()
 
         mediaSession = MediaSessionCompat(this, MEDIA_SESSION_TAG).apply {
             setSessionActivity(activityIntent)
@@ -83,6 +91,7 @@ class MediaPlaybackService: MediaBrowserServiceCompat() {
             mediaSession.sessionToken,
             MusicPlayerNotificationListener(this),
         ) {
+            Timber.d("ExoPlayer duration ${exoPlayer.duration}")
             currentSongDuration = exoPlayer.duration
         }
 
