@@ -66,8 +66,7 @@
         android:id="@+id/fragment_current_track_image"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginVertical="24dp"
+        android:layout_marginHorizontal="32dp"
         android:src="@color/green_active"
         app:layout_constraintDimensionRatio="H,1:1"
         app:layout_constraintBottom_toTopOf="@+id/fragment_current_track_control_container"
@@ -80,8 +79,7 @@
         android:id="@+id/fragment_current_track_control_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:paddingBottom="20dp"
+        android:layout_marginHorizontal="24dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
@@ -122,21 +120,18 @@
             app:layout_constraintTop_toTopOf="@+id/fragment_current_track_text_container"
             app:tint="@color/white" />
 
-        <com.google.android.material.slider.Slider
+        <SeekBar
             android:id="@+id/fragment_current_track_slider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:value="95"
-            android:valueFrom="0"
-            android:valueTo="163"
-            app:haloColor="@color/grey_track_halo"
-            app:haloRadius="14dp"
-            app:labelBehavior="gone"
+            android:layout_marginTop="16dp"
+            android:max="100"
+            android:progress="20"
+            android:thumbTint="@color/white"
+            android:progressTint="@color/white"
+            android:progressBackgroundTint="@color/grey_track_halo"
             app:layout_constraintTop_toBottomOf="@+id/fragment_current_track_text_container"
             app:thumbColor="@color/white"
-            app:thumbRadius="5dp"
-            app:trackColorActive="@color/white"
-            app:trackColorInactive="#393939"
             tools:layout_editor_absoluteX="14dp" />
 
         <TextView
@@ -147,7 +142,7 @@
             android:text="1:35"
             android:textSize="13sp"
             android:textColor="@color/grey_deactivated"
-            app:layout_constraintBottom_toBottomOf="@+id/fragment_current_track_slider"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_current_track_slider"
             app:layout_constraintStart_toStartOf="@+id/fragment_current_track_slider" />
 
         <TextView
@@ -158,7 +153,7 @@
             android:text="2:43"
             android:textSize="13sp"
             android:textColor="@color/grey_deactivated"
-            app:layout_constraintBottom_toBottomOf="@+id/fragment_current_track_slider"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_current_track_slider"
             app:layout_constraintEnd_toEndOf="@+id/fragment_current_track_slider" />
 
         <ImageView
@@ -198,6 +193,7 @@
             android:id="@+id/fragment_current_track_playback_control"
             android:layout_width="60dp"
             android:layout_height="60dp"
+            android:layout_marginTop="16dp"
             android:src="@drawable/ic_play_circle_white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/fragment_current_track_slider"
@@ -230,8 +226,9 @@
             android:id="@+id/fragment_current_track_device"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginVertical="16dp"
             android:src="@drawable/ic_device"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/fragment_current_track_shuffle"
             app:layout_constraintTop_toBottomOf="@+id/fragment_current_track_playback_control"
             app:tint="@color/grey_deactivated" />

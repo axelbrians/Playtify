@@ -1,5 +1,8 @@
 package com.machina.playtify.view
 
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_DURATION
@@ -8,7 +11,10 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.machina.playtify.R
 import com.machina.playtify.databinding.ActivityMainBinding
 import com.machina.playtify.player.isPlayEnabled
@@ -75,10 +81,26 @@ class MainActivity : AppCompatActivity() {
         viewModel.currentPlayingSong.observe(this) { currentSong ->
             if (currentSong != null) {
                 if (navController.currentDestination?.id == R.id.homeFragment) {
+                    Glide.with(this).asBitmap()
+                        .load(currentSong.description.iconUri)
+                        .into(object : CustomTarget<Bitmap>() {
+                            override fun onLoadFailed(errorDrawable: Drawable?) {  }
+
+                            override fun onResourceReady(
+                                resource: Bitmap,
+                                transition: Transition<in Bitmap>?
+                            ) {
+                                Timber.d("Glide load for palette completed")
+                                binding.currentTrackBottomBarConstraintLayout
+                                    .loadBitMapAsDarkMutedBackground(resource)
+                                binding.currentTrackImage.setImageBitmap(resource)
+                            }
+
+                            override fun onLoadCleared(placeholder: Drawable?) {  }
+                        })
                     binding.currentTrackBottomBar.isVisible = true
                     binding.currentTrackTitle.text = currentSong.description?.title.toString()
                     binding.currentTrackArtist.text = currentSong.description?.subtitle.toString()
-                    glide.load(currentSong.description.iconUri).into(binding.currentTrackImage)
                     val maxProgress = currentSong.getLong(METADATA_KEY_DURATION).toInt()
                     binding.currentTrackLinearProgress.max = maxProgress
                 } else {

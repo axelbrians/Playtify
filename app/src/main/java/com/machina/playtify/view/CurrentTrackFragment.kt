@@ -1,30 +1,29 @@
 package com.machina.playtify.view
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.media.MediaMetadataCompat
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import android.widget.SeekBar
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.palette.graphics.Palette
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.target.CustomViewTarget
-import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
+import com.google.android.material.slider.Slider
 import com.machina.playtify.R
+import com.machina.playtify.core.Helper
 import com.machina.playtify.databinding.FragmentCurrentTrackBinding
 import com.machina.playtify.player.isPlayEnabled
 import com.machina.playtify.player.isPlaying
+import com.machina.playtify.player.toSong
 import com.machina.playtify.viewmodels.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -41,7 +40,7 @@ class CurrentTrackFragment : Fragment() {
     @Inject
     lateinit var glide: RequestManager
 
-    private var currentPlayingSong: MediaMetadataCompat? = null
+    private var shouldUpdateSeekbar = true
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -59,6 +58,41 @@ class CurrentTrackFragment : Fragment() {
         binding.fragmentCurrentTrackArrowDown.setOnClickListener {
             findNavController().navigateUp()
         }
+
+        binding.fragmentCurrentTrackPlaybackControl.setOnClickListener {
+            viewModel.currentPlayingSong.value?.toSong()?.let { song ->
+                viewModel.playOrToggleSong(song, true)
+            }
+        }
+
+        binding.fragmentCurrentTrackPrevious.setOnClickListener {
+            viewModel.skipToPrevious()
+        }
+
+        binding.fragmentCurrentTrackNext.setOnClickListener {
+            shouldUpdateSeekbar = false
+            viewModel.skipToNextSong()
+        }
+
+        binding.fragmentCurrentTrackSlider.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    binding.fragmentCurrentTrackElapsed.text = Helper.millisToMMSS(progress.toLong())
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                shouldUpdateSeekbar = false
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                seekBar?.let {
+                    viewModel.seekTo(it.progress.toLong())
+                    shouldUpdateSeekbar = true
+                }
+            }
+
+        })
 
 
     }
@@ -79,82 +113,45 @@ class CurrentTrackFragment : Fragment() {
                 Glide.with(requireContext()).asBitmap()
                     .load(currentSong.description.iconUri)
                     .into(object : CustomTarget<Bitmap>() {
-                        override fun onLoadFailed(errorDrawable: Drawable?) {
-
-                        }
+                        override fun onLoadFailed(errorDrawable: Drawable?) {  }
 
                         override fun onResourceReady(
                             resource: Bitmap,
                             transition: Transition<in Bitmap>?
                         ) {
                             Timber.d("Glide load for palette completed")
-                            onGlideResourceReadyCallback(resource)
+                            binding.fragmentCurrentTrackContainer.loadBitMapAsDarkMutedGradientBackground(
+                                resource,
+                                GradientDrawable.Orientation.TOP_BOTTOM,
+                                0f
+                            )
                             binding.fragmentCurrentTrackImage.setImageBitmap(resource)
                         }
 
-                        override fun onLoadCleared(placeholder: Drawable?) {
-
-                        }
+                        override fun onLoadCleared(placeholder: Drawable?) {  }
                     })
-//                loadGradientBackground(currentSong.description.iconUri)
-//                glide.load(currentSong.description.iconUri).into(binding.fragmentCurrentTrackImage)
-                binding.fragmentCurrentTrackTitle.text = currentSong.description?.title.toString()
-                binding.fragmentCurrentTrackSubtitle.text = currentSong.description?.subtitle.toString()
                 val maxProgress = currentSong.getLong(MediaMetadataCompat.METADATA_KEY_DURATION).toInt()
-                val totalSecs = maxProgress / 1000
-                val minutes = (totalSecs % 3600) / 60
-                val seconds = totalSecs % 60
-                val timeString = String.format("%02d:%02d", minutes, seconds)
-                binding.fragmentCurrentTrackSlider.value = 0f
-                binding.fragmentCurrentTrackSlider.valueTo = maxProgress.toFloat()
-                binding.fragmentCurrentTrackTotalTime.text = timeString
+                with(binding) {
+                    fragmentCurrentTrackTitle.text = currentSong.description?.title.toString()
+                    fragmentCurrentTrackSubtitle.text = currentSong.description?.subtitle.toString()
+                    fragmentCurrentTrackSlider.max = maxProgress
+                    fragmentCurrentTrackTotalTime.text = Helper.millisToMMSS(maxProgress.toLong())
+                }
+                shouldUpdateSeekbar = true
             }
         }
 
         viewModel.currentPlayerPosition.observe(viewLifecycleOwner) { position ->
 //            Timber.d("CurrentPosition $position")
-            if (position < (binding.fragmentCurrentTrackSlider.valueTo - 900)) {
-                binding.fragmentCurrentTrackSlider.value = position.toFloat()
+            if (shouldUpdateSeekbar) {
+                binding.fragmentCurrentTrackSlider.progress = position.toInt()
             }
-            val totalSecs = position / 1000
-            val minutes = (totalSecs % 3600) / 60
-            val seconds = totalSecs % 60
-            val timeString = String.format("%02d:%02d", minutes, seconds)
-            binding.fragmentCurrentTrackElapsed.text = timeString
+            binding.fragmentCurrentTrackElapsed.text = Helper.millisToMMSS(position)
         }
-    }
-
-    private fun onGlideResourceReadyCallback(bitmap: Bitmap) {
-        // Palette is used to generate color based on the Bitmap
-        // it can generate several color which some option can be null
-        // Read more about Palette in official docs
-        val paletteBuilder = Palette.Builder(bitmap).maximumColorCount(16)
-        var palette = paletteBuilder.generate().getDarkMutedColor(0)
-        if (palette == 0) palette = paletteBuilder.generate().getMutedColor(0)
-        if (palette == 0) palette = paletteBuilder.generate().getLightMutedColor(0)
-        if (palette == 0) palette = paletteBuilder.generate().getDominantColor(0)
-
-        // this color Array used to create GradientDrawable effect that later will
-        // be applied to image header
-        val color = IntArray(2)
-        color[0] = palette
-        color[1] = 0xFF121212.toInt()
-        Timber.d("palette: $palette")
-
-        // Generate GradientDrawable based on the color that has been extracted
-        // from the Bitmap above with Palette
-        val gradientDrawable = GradientDrawable(
-            GradientDrawable.Orientation.TOP_BOTTOM,
-            color
-        )
-        gradientDrawable.cornerRadius = 0f
-
-        binding.fragmentCurrentTrackContainer.background = gradientDrawable
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
     }
-
 }

@@ -3,6 +3,7 @@ package com.machina.playtify.viewmodels
 import android.os.Handler
 import android.os.Looper
 import android.support.v4.media.MediaBrowserCompat
+import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_MEDIA_ID
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -91,8 +92,13 @@ class HomeViewModel @Inject constructor(
     }
 
     fun skipToPrevious() {
-        musicServiceConnection.transportControls.skipToPrevious()
-        playbackState.value?.position
+        val currentPos = playbackState.value?.currentPlayPosition ?: 0
+        Timber.d("Current Playback Position $currentPos")
+        if (currentPos < 10000) {
+            musicServiceConnection.transportControls.skipToPrevious()
+        } else {
+            musicServiceConnection.transportControls.seekTo(0)
+        }
     }
 
     fun seekTo(pos: Long) {
