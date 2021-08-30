@@ -34,5 +34,7 @@ object Constants {
     const val NOTIFICATION_CHANNEL_ID = "playtify_notification_channel"
     const val NOTIFICATION_ID = 1
 
+    const val POSITION_UPDATE_INTERVAL_MILLIS = 500L
+
     const val NETWORK_ERROR = "network_error"
 }

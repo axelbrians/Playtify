@@ -2,14 +2,41 @@ package com.machina.playtify.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.RequestManager
 import com.machina.playtify.databinding.VhItemSongBinding
+import com.machina.playtify.model.Song
 import javax.inject.Inject
 
 
-class HomeSongAdapter(
-    private val onSongClick: () -> Unit
+class HomeSongAdapter @Inject constructor(
+    private val glide: RequestManager
 ): RecyclerView.Adapter<VhItemSong>() {
+
+
+    private val diffCallback = object : DiffUtil.ItemCallback<Song>() {
+        override fun areItemsTheSame(oldItem: Song, newItem: Song): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: Song, newItem: Song): Boolean {
+            return oldItem.hashCode() == newItem.hashCode()
+        }
+    }
+
+    private val differ = AsyncListDiffer(this, diffCallback)
+
+    var songs: List<Song>
+        get() = differ.currentList
+        set(value) = differ.submitList(value)
+
+    private var onSongClickListener: ((Song) -> Unit)? = null
+
+    fun setOnSongClickListener(listener: (Song) -> Unit) {
+        onSongClickListener = listener
+    }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VhItemSong {
@@ -20,11 +47,11 @@ class HomeSongAdapter(
     }
 
     override fun onBindViewHolder(holder: VhItemSong, position: Int) {
-        holder.onBind(onSongClick)
+        holder.onBind(songs[position], glide, onSongClickListener)
     }
 
     override fun getItemCount(): Int {
-        return 12
+        return songs.size
     }
 
 
@@ -32,9 +59,13 @@ class HomeSongAdapter(
 
 class VhItemSong(private val binding: VhItemSongBinding): RecyclerView.ViewHolder(binding.root) {
 
-    fun onBind(onSongClick: () -> Unit) {
+    fun onBind(song: Song, glide: RequestManager, onSongClick: ((Song) -> Unit)?) {
         binding.vhItemSongContainer.setOnClickListener {
-            onSongClick()
+            onSongClick?.let { onSongClick(song) }
         }
+
+        binding.vhItemSongTitle.text = song.title
+        binding.vhItemSongArtist.text = song.subtitle
+        glide.load(song.imageUrl).into(binding.vhItemSongImg)
     }
 }

@@ -26,7 +26,9 @@ class FirebaseMusicSource @Inject constructor(
 
     @InternalCoroutinesApi
     suspend fun fetchMediaData() = withContext(Dispatchers.IO) {
-        state = STATE_INITIALIZING
+        withContext(Dispatchers.Main) {
+            state = STATE_INITIALIZING
+        }
         val allSongs = musicDatabase.getAllSongs()
         songs = allSongs.map { song ->
             Builder()
@@ -41,7 +43,9 @@ class FirebaseMusicSource @Inject constructor(
                 .putString(METADATA_KEY_DISPLAY_DESCRIPTION, song.subtitle)
                 .build()
         }
-        state = STATE_INITIALIZED
+        withContext(Dispatchers.Main) {
+            state = STATE_INITIALIZED
+        }
     }
 
     fun asMediaSource(dataSourceFactory: DefaultDataSourceFactory): ConcatenatingMediaSource {
