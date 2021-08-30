@@ -15,8 +15,9 @@
         android:name="com.machina.playtify.view.HomeFragment"
         android:label="HomeFragment"
         tools:layout="@layout/fragment_home">
-        <action
-            android:id="@+id/action_homeFragment_to_currentTrackFragment"
-            app:destination="@id/currentTrackFragment" />
     </fragment>
+
+    <action
+        android:id="@+id/global_action_to_currentTrackFragment"
+        app:destination="@id/currentTrackFragment" />
 </navigation>

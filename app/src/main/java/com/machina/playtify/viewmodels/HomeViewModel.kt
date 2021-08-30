@@ -74,8 +74,8 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             while (true) {
                 val position = playbackState.value?.currentPlayPosition ?: 0L
-                Timber.d("Current Playback Position $position")
-                Timber.d("Current Playback Duration ${MediaPlaybackService.currentSongDuration}")
+//                Timber.d("Current Playback Position $position")
+//                Timber.d("Current Playback Duration ${MediaPlaybackService.currentSongDuration}")
                 if (currentPlayerPosition.value != position) {
                     _currentPlayerPosition.postValue(position)
                     _currentSongDuration.postValue(MediaPlaybackService.currentSongDuration)

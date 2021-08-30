@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_DURATION
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -39,7 +40,7 @@ class MainActivity : AppCompatActivity() {
 
 
         binding.currentTrackBottomBar.setOnClickListener {
-            val action = HomeFragmentDirections.actionHomeFragmentToCurrentTrackFragment()
+            val action = HomeFragmentDirections.globalActionToCurrentTrackFragment()
             navController.navigate(action)
         }
 
@@ -54,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
-        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+        navController.addOnDestinationChangedListener { _, destination, _ ->
             when(destination.id) {
                 R.id.homeFragment -> showBottomBar()
                 else -> hideBottomBar()
@@ -73,29 +74,35 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.currentPlayingSong.observe(this) { currentSong ->
             if (currentSong != null) {
-                binding.currentTrackBottomBar.visibility = View.VISIBLE
-                binding.currentTrackTitle.text = currentSong.description?.title.toString()
-                binding.currentTrackArtist.text = currentSong.description?.subtitle.toString()
-                glide.load(currentSong.description.iconUri).into(binding.currentTrackImage)
-                Timber.d("CurrentDuration ${currentSong.getLong(METADATA_KEY_DURATION).toInt()}")
-                val maxProgress = currentSong.getLong(METADATA_KEY_DURATION).toInt()
-                binding.currentTrackLinearProgress.max = maxProgress
+                if (navController.currentDestination?.id == R.id.homeFragment) {
+                    binding.currentTrackBottomBar.isVisible = true
+                    binding.currentTrackTitle.text = currentSong.description?.title.toString()
+                    binding.currentTrackArtist.text = currentSong.description?.subtitle.toString()
+                    glide.load(currentSong.description.iconUri).into(binding.currentTrackImage)
+                    val maxProgress = currentSong.getLong(METADATA_KEY_DURATION).toInt()
+                    binding.currentTrackLinearProgress.max = maxProgress
+                } else {
+                    binding.currentTrackBottomBar.isVisible = false
+                }
+
             } else {
-                binding.currentTrackBottomBar.visibility = View.GONE
+                binding.currentTrackBottomBar.isVisible = true
             }
         }
 
         viewModel.currentPlayerPosition.observe(this) { position ->
 //            Timber.d("CurrentPosition $position")
-            binding.currentTrackLinearProgress.progress = position.toInt()
+            if (navController.currentDestination?.id == R.id.homeFragment) {
+                binding.currentTrackLinearProgress.progress = position.toInt()
+            }
         }
     }
 
     private fun showBottomBar() {
-        binding.currentTrackBottomBar.visibility = View.VISIBLE
+        binding.currentTrackBottomBar.isVisible = true
     }
 
     private fun hideBottomBar() {
-        binding.currentTrackBottomBar.visibility = View.GONE
+        binding.currentTrackBottomBar.isVisible = false
     }
 }
