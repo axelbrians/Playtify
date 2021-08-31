@@ -40,9 +40,6 @@ class HomeViewModel @Inject constructor(
     private val _currentSongDuration = MutableLiveData<Long>()
     val currentSongDuration: LiveData<Long> = _currentSongDuration
 
-    private var updatePosition = true
-    private val handler = Handler(Looper.getMainLooper())
-
     init {
         _mediaItems.postValue(Resource.loading(null))
         musicServiceConnection.subscribe(
@@ -125,8 +122,6 @@ class HomeViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
-
-        updatePosition = false
         musicServiceConnection.unsubscribe(
             MY_MEDIA_ROOT_ID,
             object : MediaBrowserCompat.SubscriptionCallback() {  }

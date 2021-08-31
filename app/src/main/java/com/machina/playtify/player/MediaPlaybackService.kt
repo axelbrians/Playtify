@@ -1,5 +1,6 @@
 package com.machina.playtify.player
 
+import android.app.Notification
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
@@ -50,9 +51,12 @@ class MediaPlaybackService: MediaBrowserServiceCompat() {
     private lateinit var mediaSession: MediaSessionCompat
     private lateinit var mediaSessionConnector: MediaSessionConnector
     private lateinit var musicEventPlayerListener: MusicPlayerEventListener
-    private lateinit var stateBuilder: PlaybackStateCompat.Builder
 
     var isForegroundService = false
+
+    fun setForegroundStatus() {
+        musicNotificationManager
+    }
 
     private var currentPlayingSong: MediaMetadataCompat? = null
 
@@ -69,7 +73,6 @@ class MediaPlaybackService: MediaBrowserServiceCompat() {
         serviceScope.launch {
             firebaseMusicSource.fetchMediaData()
         }
-
         // Define pending intent to open our Launch Activity upon clicking on notification service
 //        val activityIntent = packageManager?.getLaunchIntentForPackage(packageName)?.let {
 //            PendingIntent.getActivity(this, 0, it, 0)
@@ -163,8 +166,8 @@ class MediaPlaybackService: MediaBrowserServiceCompat() {
                 val resultSent = firebaseMusicSource.whenReady { isInitialized ->
                     if (isInitialized) {
                         result.sendResult(firebaseMusicSource.asMediaItems())
-                        if (!isPLayerInitialized && firebaseMusicSource.songs.isNotEmpty()) {
-                            preparePlayer(firebaseMusicSource.songs, firebaseMusicSource.songs[0], false)
+                        if (!isPLayerInitialized) {
+//                            preparePlayer(firebaseMusicSource.songs, firebaseMusicSource.songs[0], false)
                             isPLayerInitialized = true
                         }
                     } else {

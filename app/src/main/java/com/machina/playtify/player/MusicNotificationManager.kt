@@ -1,5 +1,6 @@
 package com.machina.playtify.player
 
+import android.app.Notification
 import android.app.PendingIntent
 import android.content.Context
 import android.graphics.Bitmap
@@ -8,6 +9,7 @@ import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.widget.ImageView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.target.CustomViewTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.exoplayer2.Player
@@ -64,10 +66,9 @@ class MusicNotificationManager(
             player: Player,
             callback: PlayerNotificationManager.BitmapCallback
         ): Bitmap? {
-            val view = ImageView(context)
             Glide.with(context).asBitmap()
                 .load(mediaController.metadata.description.iconUri)
-                .into(object : CustomViewTarget<ImageView, Bitmap>(view) {
+                .into(object : CustomTarget<Bitmap>() {
                     override fun onLoadFailed(errorDrawable: Drawable?) {
 
                     }
@@ -79,7 +80,7 @@ class MusicNotificationManager(
                         callback.onBitmap(resource)
                     }
 
-                    override fun onResourceCleared(placeholder: Drawable?) = Unit
+                    override fun onLoadCleared(placeholder: Drawable?) = Unit
                 })
             return null
         }

@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_DURATION
 import android.view.View
 import androidx.core.view.isVisible
@@ -63,8 +64,18 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when(destination.id) {
-                R.id.homeFragment -> showBottomBar()
-                else -> hideBottomBar()
+                R.id.homeFragment -> {
+                    showBottomBar()
+                    val currentSong = viewModel.currentPlayingSong.value
+                    if (currentSong != null) {
+                        loadBottomTrackbarContentCallback(currentSong)
+                    } else {
+                        hideBottomBar()
+                    }
+                }
+                else -> {
+                    hideBottomBar()
+                }
             }
         }
     }
@@ -81,42 +92,17 @@ class MainActivity : AppCompatActivity() {
         viewModel.currentPlayingSong.observe(this) { currentSong ->
             if (currentSong != null) {
                 if (navController.currentDestination?.id == R.id.homeFragment) {
-                    Glide.with(this).asBitmap()
-                        .load(currentSong.description.iconUri)
-                        .into(object : CustomTarget<Bitmap>() {
-                            override fun onLoadFailed(errorDrawable: Drawable?) {  }
-
-                            override fun onResourceReady(
-                                resource: Bitmap,
-                                transition: Transition<in Bitmap>?
-                            ) {
-                                Timber.d("Glide load for palette completed")
-                                binding.currentTrackBottomBarConstraintLayout
-                                    .loadBitMapAsDarkMutedBackground(resource)
-                                binding.currentTrackImage.setImageBitmap(resource)
-                            }
-
-                            override fun onLoadCleared(placeholder: Drawable?) {  }
-                        })
-                    binding.currentTrackBottomBar.isVisible = true
-                    binding.currentTrackTitle.text = currentSong.description?.title.toString()
-                    binding.currentTrackArtist.text = currentSong.description?.subtitle.toString()
-                    val maxProgress = currentSong.getLong(METADATA_KEY_DURATION).toInt()
-                    binding.currentTrackLinearProgress.max = maxProgress
+                    loadBottomTrackbarContentCallback(currentSong)
                 } else {
                     binding.currentTrackBottomBar.isVisible = false
                 }
-
             } else {
-                binding.currentTrackBottomBar.isVisible = true
+                binding.currentTrackBottomBar.isVisible = false
             }
         }
 
         viewModel.currentPlayerPosition.observe(this) { position ->
-//            Timber.d("CurrentPosition $position")
-            if (navController.currentDestination?.id == R.id.homeFragment) {
-                binding.currentTrackLinearProgress.progress = position.toInt()
-            }
+            binding.currentTrackLinearProgress.progress = position.toInt()
         }
     }
 
@@ -126,5 +112,30 @@ class MainActivity : AppCompatActivity() {
 
     private fun hideBottomBar() {
         binding.currentTrackBottomBar.isVisible = false
+    }
+
+    private fun loadBottomTrackbarContentCallback(currentSong: MediaMetadataCompat) {
+        Glide.with(this).asBitmap()
+            .load(currentSong.description.iconUri)
+            .into(object : CustomTarget<Bitmap>() {
+                override fun onLoadFailed(errorDrawable: Drawable?) {  }
+
+                override fun onResourceReady(
+                    resource: Bitmap,
+                    transition: Transition<in Bitmap>?
+                ) {
+                    Timber.d("Glide load for palette completed")
+                    binding.currentTrackBottomBarConstraintLayout
+                        .loadBitMapAsDarkMutedBackground(resource)
+                    binding.currentTrackImage.setImageBitmap(resource)
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) {  }
+            })
+        binding.currentTrackBottomBar.isVisible = true
+        binding.currentTrackTitle.text = currentSong.description?.title.toString()
+        binding.currentTrackArtist.text = currentSong.description?.subtitle.toString()
+        val maxProgress = currentSong.getLong(METADATA_KEY_DURATION).toInt()
+        binding.currentTrackLinearProgress.max = maxProgress
     }
 }

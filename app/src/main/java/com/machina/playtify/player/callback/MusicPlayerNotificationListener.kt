@@ -34,6 +34,8 @@ class MusicPlayerNotificationListener(
                 )
                 startForeground(NOTIFICATION_ID, notification)
                 isForegroundService = true
+            } else {
+                stopForeground(false)
             }
         }
     }
