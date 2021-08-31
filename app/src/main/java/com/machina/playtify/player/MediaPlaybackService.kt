@@ -42,21 +42,20 @@ class MediaPlaybackService: MediaBrowserServiceCompat() {
     @Inject
     lateinit var firebaseMusicSource: FirebaseMusicSource
 
-    private lateinit var musicNotificationManager: MusicNotificationManager
-
     // Define custom coroutineScope scoped in this service
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
 
+    private lateinit var musicNotificationManager: MusicNotificationManager
     private lateinit var mediaSession: MediaSessionCompat
     private lateinit var mediaSessionConnector: MediaSessionConnector
     private lateinit var musicEventPlayerListener: MusicPlayerEventListener
 
+    /**
+     * A flag to determine current notification of this Service
+     * is dismissible or not from NotificationListener callback
+     */
     var isForegroundService = false
-
-    fun setForegroundStatus() {
-        musicNotificationManager
-    }
 
     private var currentPlayingSong: MediaMetadataCompat? = null
 
@@ -73,10 +72,6 @@ class MediaPlaybackService: MediaBrowserServiceCompat() {
         serviceScope.launch {
             firebaseMusicSource.fetchMediaData()
         }
-        // Define pending intent to open our Launch Activity upon clicking on notification service
-//        val activityIntent = packageManager?.getLaunchIntentForPackage(packageName)?.let {
-//            PendingIntent.getActivity(this, 0, it, 0)
-//        }
 
         val activityIntent = NavDeepLinkBuilder(this)
             .setGraph(R.navigation.main_navigation)
@@ -121,6 +116,7 @@ class MediaPlaybackService: MediaBrowserServiceCompat() {
         override fun getMediaDescription(player: Player, windowIndex: Int): MediaDescriptionCompat {
             return firebaseMusicSource.songs[windowIndex].description
         }
+
     }
 
     private fun preparePlayer(

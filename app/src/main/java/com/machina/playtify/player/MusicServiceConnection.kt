@@ -32,6 +32,12 @@ class MusicServiceConnection(
     private val _currentPlayingSong = MutableLiveData<MediaMetadataCompat?>()
     val currentPlayingSong: LiveData<MediaMetadataCompat?> = _currentPlayingSong
 
+    private val _shuffleMode = MutableLiveData<Int>()
+    val shuffleMode: LiveData<Int> = _shuffleMode
+
+    private val _repeatMode = MutableLiveData<Int>()
+    val repeatMode: LiveData<Int> = _repeatMode
+
     private val mediaBrowserConnectionCallback = MediaBrowserConnectionCallback(context)
 
     private val mediaBrowserCompat = MediaBrowserCompat(
@@ -82,6 +88,15 @@ class MusicServiceConnection(
 
 
     private inner class MediaControllerCallback: MediaControllerCompat.Callback() {
+        override fun onRepeatModeChanged(repeatMode: Int) {
+            super.onRepeatModeChanged(repeatMode)
+            _repeatMode.postValue(repeatMode)
+        }
+
+        override fun onShuffleModeChanged(shuffleMode: Int) {
+            super.onShuffleModeChanged(shuffleMode)
+            _shuffleMode.postValue(shuffleMode)
+        }
 
         override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
             super.onPlaybackStateChanged(state)
@@ -90,6 +105,8 @@ class MusicServiceConnection(
 
         override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
             super.onMetadataChanged(metadata)
+            _repeatMode.postValue(mediaController.repeatMode)
+            _shuffleMode.postValue(mediaController.shuffleMode)
             _currentPlayingSong.postValue(metadata)
         }
 

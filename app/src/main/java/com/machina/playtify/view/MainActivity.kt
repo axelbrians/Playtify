@@ -87,6 +87,7 @@ class MainActivity : AppCompatActivity() {
             } else if (state?.isPlayEnabled == true) {
                 binding.currentTrackPlaybackControl.setImageResource(R.drawable.ic_baseline_play_arrow_24)
             }
+
         }
 
         viewModel.currentPlayingSong.observe(this) { currentSong ->
@@ -99,6 +100,10 @@ class MainActivity : AppCompatActivity() {
             } else {
                 binding.currentTrackBottomBar.isVisible = false
             }
+        }
+
+        viewModel.currentSongDuration.observe(this) { currentSongDuration ->
+            binding.currentTrackLinearProgress.max = (currentSongDuration ?: 0L).toInt()
         }
 
         viewModel.currentPlayerPosition.observe(this) { position ->
@@ -135,7 +140,5 @@ class MainActivity : AppCompatActivity() {
         binding.currentTrackBottomBar.isVisible = true
         binding.currentTrackTitle.text = currentSong.description?.title.toString()
         binding.currentTrackArtist.text = currentSong.description?.subtitle.toString()
-        val maxProgress = currentSong.getLong(METADATA_KEY_DURATION).toInt()
-        binding.currentTrackLinearProgress.max = maxProgress
     }
 }

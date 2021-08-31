@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import com.machina.playtify.core.Constants.NOTIFICATION_ID
 import com.machina.playtify.player.MediaPlaybackService
+import timber.log.Timber
 
 class MusicPlayerNotificationListener(
     private val mediaPlaybackService: MediaPlaybackService
@@ -26,15 +27,19 @@ class MusicPlayerNotificationListener(
         ongoing: Boolean
     ) {
         super.onNotificationPosted(notificationId, notification, ongoing)
+        Timber.d("notification $notification")
         mediaPlaybackService.apply {
+            Timber.d("onGoing $ongoing || isForegroundService $isForegroundService")
             if (ongoing && !isForegroundService) {
+                Timber.d("Starting service and notification")
                 ContextCompat.startForegroundService(
                     this,
                     Intent(applicationContext, this::class.java)
                 )
                 startForeground(NOTIFICATION_ID, notification)
                 isForegroundService = true
-            } else {
+            } else if (!ongoing && !isForegroundService){
+                Timber.d("Notification is now dismissible")
                 stopForeground(false)
             }
         }

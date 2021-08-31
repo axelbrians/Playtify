@@ -5,6 +5,8 @@ import android.os.Looper
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_MEDIA_ID
+import android.support.v4.media.session.PlaybackStateCompat
+import android.support.v4.media.session.PlaybackStateCompat.*
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -33,6 +35,8 @@ class HomeViewModel @Inject constructor(
     val networkError = musicServiceConnection.networkError
     val currentPlayingSong = musicServiceConnection.currentPlayingSong
     val playbackState = musicServiceConnection.playbackState
+    val shuffleMode = musicServiceConnection.shuffleMode
+    val repeatMode = musicServiceConnection.repeatMode
 
     private val _currentPlayerPosition = MutableLiveData<Long>()
     val currentPlayerPosition: LiveData<Long> = _currentPlayerPosition
@@ -80,6 +84,28 @@ class HomeViewModel @Inject constructor(
                 }
 
                 delay(POSITION_UPDATE_INTERVAL_MILLIS)
+            }
+        }
+    }
+
+
+    fun shuffleMode(toggle: Boolean = false) {
+        with(musicServiceConnection.transportControls) {
+            if (toggle) {
+                setShuffleMode(SHUFFLE_MODE_ALL)
+            } else {
+                setShuffleMode(SHUFFLE_MODE_NONE)
+            }
+        }
+    }
+
+    fun repeatMode(toggle: Boolean = false) {
+        with(musicServiceConnection.transportControls) {
+            if (toggle) {
+                setRepeatMode(REPEAT_MODE_ALL)
+            }
+            else {
+                setRepeatMode(REPEAT_MODE_NONE)
             }
         }
     }

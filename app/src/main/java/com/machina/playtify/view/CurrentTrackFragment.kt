@@ -1,15 +1,21 @@
 package com.machina.playtify.view
 
+import android.content.res.ColorStateList
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.support.v4.media.MediaMetadataCompat
+import android.support.v4.media.session.PlaybackStateCompat
+import android.support.v4.media.session.PlaybackStateCompat.REPEAT_MODE_ALL
+import android.support.v4.media.session.PlaybackStateCompat.SHUFFLE_MODE_ALL
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.palette.graphics.Palette
@@ -147,6 +153,36 @@ class CurrentTrackFragment : Fragment() {
                 binding.fragmentCurrentTrackSlider.progress = position.toInt()
             }
             binding.fragmentCurrentTrackElapsed.text = Helper.millisToMMSS(position)
+        }
+
+        viewModel.shuffleMode.observe(viewLifecycleOwner) { shuffleMode ->
+            when (shuffleMode) {
+                SHUFFLE_MODE_ALL -> {
+                    binding.fragmentCurrentTrackShuffle.setOnClickListener { viewModel.shuffleMode() }
+                    binding.fragmentCurrentTrackShuffle.imageTintList = ColorStateList.valueOf(Color.parseColor("#20B557"))
+                    binding.fragmentCurrentTrackShuffleDot.isVisible = true
+                }
+                else -> {
+                    binding.fragmentCurrentTrackShuffle.setOnClickListener { viewModel.shuffleMode(true) }
+                    binding.fragmentCurrentTrackShuffle.imageTintList = ColorStateList.valueOf(Color.parseColor("#FFFFFF"))
+                    binding.fragmentCurrentTrackShuffleDot.isVisible = false
+                }
+            }
+        }
+
+        viewModel.repeatMode.observe(viewLifecycleOwner) { repeatMode ->
+            when (repeatMode) {
+                REPEAT_MODE_ALL -> {
+                    binding.fragmentCurrentTrackRepeat.setOnClickListener { viewModel.repeatMode() }
+                    binding.fragmentCurrentTrackRepeat.imageTintList = ColorStateList.valueOf(Color.parseColor("#20B557"))
+                    binding.fragmentCurrentTrackRepeatDot.isVisible = true
+                }
+                else -> {
+                    binding.fragmentCurrentTrackRepeat.setOnClickListener { viewModel.repeatMode(true) }
+                    binding.fragmentCurrentTrackRepeat.imageTintList = ColorStateList.valueOf(Color.parseColor("#FFFFFF"))
+                    binding.fragmentCurrentTrackRepeatDot.isVisible = false
+                }
+            }
         }
     }
 
