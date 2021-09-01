@@ -7,7 +7,6 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.support.v4.media.MediaMetadataCompat
-import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.REPEAT_MODE_ALL
 import android.support.v4.media.session.PlaybackStateCompat.SHUFFLE_MODE_ALL
 import androidx.fragment.app.Fragment
@@ -18,19 +17,17 @@ import android.widget.SeekBar
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import androidx.palette.graphics.Palette
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
-import com.google.android.material.slider.Slider
 import com.machina.playtify.R
 import com.machina.playtify.core.Helper
 import com.machina.playtify.databinding.FragmentCurrentTrackBinding
 import com.machina.playtify.player.isPlayEnabled
 import com.machina.playtify.player.isPlaying
 import com.machina.playtify.player.toSong
-import com.machina.playtify.viewmodels.HomeViewModel
+import com.machina.playtify.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
@@ -41,7 +38,7 @@ class CurrentTrackFragment : Fragment() {
     private var _binding: FragmentCurrentTrackBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: HomeViewModel
+    private lateinit var viewModel: MainViewModel
 
     @Inject
     lateinit var glide: RequestManager
@@ -63,6 +60,11 @@ class CurrentTrackFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.fragmentCurrentTrackArrowDown.setOnClickListener {
             findNavController().navigateUp()
+        }
+
+        binding.fragmentCurrentTrackQueue.setOnClickListener {
+            val action = CurrentTrackFragmentDirections.actionCurrentTrackFragmentToCurrentQueueFragment()
+            findNavController().navigate(action)
         }
 
         binding.fragmentCurrentTrackPlaybackControl.setOnClickListener {
@@ -104,7 +106,7 @@ class CurrentTrackFragment : Fragment() {
     }
 
     private fun setupObserver() {
-        viewModel = ViewModelProvider(requireActivity())[HomeViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
 
         viewModel.playbackState.observe(viewLifecycleOwner) { state ->
             if (state?.isPlaying == true) {
@@ -148,11 +150,11 @@ class CurrentTrackFragment : Fragment() {
         }
 
         viewModel.currentPlayerPosition.observe(viewLifecycleOwner) { position ->
-//            Timber.d("CurrentPosition $position")
+            Timber.d("shouldUpdateSeekbar $shouldUpdateSeekbar")
             if (shouldUpdateSeekbar) {
                 binding.fragmentCurrentTrackSlider.progress = position.toInt()
+                binding.fragmentCurrentTrackElapsed.text = Helper.millisToMMSS(position)
             }
-            binding.fragmentCurrentTrackElapsed.text = Helper.millisToMMSS(position)
         }
 
         viewModel.shuffleMode.observe(viewLifecycleOwner) { shuffleMode ->

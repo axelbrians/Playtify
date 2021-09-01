@@ -2,6 +2,7 @@ package com.machina.playtify.player
 
 import android.os.SystemClock
 import android.support.v4.media.MediaMetadataCompat
+import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.STATE_PLAYING
 import com.machina.playtify.model.Song
@@ -29,6 +30,16 @@ inline val PlaybackStateCompat.currentPlayPosition: Long
     }
 
 fun MediaMetadataCompat.toSong(): Song {
+    return Song(
+        description.mediaId.toString(),
+        description.title.toString(),
+        description.subtitle.toString(),
+        description.iconUri.toString(),
+        description.mediaUri.toString()
+    )
+}
+
+fun MediaSessionCompat.QueueItem.toSong(): Song {
     return Song(
         description.mediaId.toString(),
         description.title.toString(),

@@ -63,7 +63,8 @@
                 android:text="LYRICS"
                 android:textColor="@color/black"
                 android:textStyle="bold"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/vh_item_song_artist"

@@ -9,12 +9,14 @@ import android.os.Looper
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
+import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.machina.playtify.core.Constants.NETWORK_ERROR
 import com.machina.playtify.model.Event
 import com.machina.playtify.model.Resource
+import timber.log.Timber
 
 class MusicServiceConnection(
     context: Context
@@ -31,6 +33,9 @@ class MusicServiceConnection(
 
     private val _currentPlayingSong = MutableLiveData<MediaMetadataCompat?>()
     val currentPlayingSong: LiveData<MediaMetadataCompat?> = _currentPlayingSong
+
+    private val _currentQueue = MutableLiveData<List<MediaSessionCompat.QueueItem>>()
+    val currentQueue: LiveData<List<MediaSessionCompat.QueueItem>> = _currentQueue
 
     private val _shuffleMode = MutableLiveData<Int>()
     val shuffleMode: LiveData<Int> = _shuffleMode
@@ -88,6 +93,12 @@ class MusicServiceConnection(
 
 
     private inner class MediaControllerCallback: MediaControllerCompat.Callback() {
+        override fun onQueueChanged(queue: MutableList<MediaSessionCompat.QueueItem>?) {
+            super.onQueueChanged(queue)
+            queue?.let {  _currentQueue.postValue(it) }
+            Timber.d("currentQueue $queue")
+        }
+
         override fun onRepeatModeChanged(repeatMode: Int) {
             super.onRepeatModeChanged(repeatMode)
             _repeatMode.postValue(repeatMode)

@@ -2,12 +2,9 @@ package com.machina.playtify.view
 
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import android.graphics.drawable.GradientDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.media.MediaMetadataCompat
-import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_DURATION
-import android.view.View
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -21,7 +18,7 @@ import com.machina.playtify.databinding.ActivityMainBinding
 import com.machina.playtify.player.isPlayEnabled
 import com.machina.playtify.player.isPlaying
 import com.machina.playtify.player.toSong
-import com.machina.playtify.viewmodels.HomeViewModel
+import com.machina.playtify.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
@@ -33,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
-    private lateinit var viewModel: HomeViewModel
+    private lateinit var viewModel: MainViewModel
     private lateinit var navController: NavController
 
     @Inject
@@ -61,7 +58,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupView() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
-        viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when(destination.id) {
                 R.id.homeFragment -> {
