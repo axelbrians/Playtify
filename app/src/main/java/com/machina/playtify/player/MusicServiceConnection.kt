@@ -94,11 +94,25 @@ class MusicServiceConnection(
 
 
     private inner class MediaControllerCallback: MediaControllerCompat.Callback() {
+        override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
+            super.onPlaybackStateChanged(state)
+            _playbackState.postValue(state)
+            updateCurrentQueue(mediaController.queue)
+//            Timber.d("newPlaybackState $state")
+        }
+
         override fun onQueueChanged(queue: MutableList<MediaSessionCompat.QueueItem>?) {
             super.onQueueChanged(queue)
+            updateCurrentQueue(queue)
+        }
+
+        private fun updateCurrentQueue(queue: MutableList<MediaSessionCompat.QueueItem>?) {
             val repeat = mediaController.repeatMode
             val value = mediaController.metadata?.toSong()
             var songs = queue?.map { it.toSong() }?.toMutableList()
+            songs?.forEach {
+                Timber.d("oldQueue ${it.title}")
+            }
             if (value != null && songs != null) {
                 val tempList = mutableListOf<Song>()
                 var currentIndex = songs.indexOfFirst { it.id == value.id }
@@ -114,6 +128,9 @@ class MusicServiceConnection(
                     }
                 }
                 songs = tempList
+            }
+            songs?.forEach {
+                Timber.d("newQueue ${it.title}")
             }
             songs?.let {
                 _currentQueue.postValue(it)
@@ -132,11 +149,6 @@ class MusicServiceConnection(
         override fun onShuffleModeChanged(shuffleMode: Int) {
             super.onShuffleModeChanged(shuffleMode)
             _shuffleMode.postValue(shuffleMode)
-        }
-
-        override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
-            super.onPlaybackStateChanged(state)
-            _playbackState.postValue(state)
         }
 
         override fun onMetadataChanged(metadata: MediaMetadataCompat?) {

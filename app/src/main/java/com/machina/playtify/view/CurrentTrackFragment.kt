@@ -99,10 +99,7 @@ class CurrentTrackFragment : Fragment() {
                     shouldUpdateSeekbar = true
                 }
             }
-
         })
-
-
     }
 
     private fun setupObserver() {
@@ -127,7 +124,6 @@ class CurrentTrackFragment : Fragment() {
                             resource: Bitmap,
                             transition: Transition<in Bitmap>?
                         ) {
-                            Timber.d("Glide load for palette completed")
                             binding.fragmentCurrentTrackContainer.loadBitMapAsDarkMutedGradientBackground(
                                 resource,
                                 GradientDrawable.Orientation.TOP_BOTTOM,
@@ -150,14 +146,14 @@ class CurrentTrackFragment : Fragment() {
         }
 
         viewModel.currentPlayerPosition.observe(viewLifecycleOwner) { position ->
-            Timber.d("shouldUpdateSeekbar $shouldUpdateSeekbar")
+//            Timber.d("shouldUpdateSeekbar $shouldUpdateSeekbar")
             if (shouldUpdateSeekbar) {
                 binding.fragmentCurrentTrackSlider.progress = position.toInt()
                 binding.fragmentCurrentTrackElapsed.text = Helper.millisToMMSS(position)
             }
         }
 
-        viewModel.repeatMode.observe(viewLifecycleOwner) { shuffleMode ->
+        viewModel.shuffleMode.observe(viewLifecycleOwner) { shuffleMode ->
             when (shuffleMode) {
                 SHUFFLE_MODE_ALL -> {
                     binding.fragmentCurrentTrackShuffle.setOnClickListener { viewModel.shuffleMode() }

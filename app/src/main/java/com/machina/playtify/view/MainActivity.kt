@@ -84,7 +84,6 @@ class MainActivity : AppCompatActivity() {
             } else if (state?.isPlayEnabled == true) {
                 binding.currentTrackPlaybackControl.setImageResource(R.drawable.ic_baseline_play_arrow_24)
             }
-
         }
 
         viewModel.currentPlayingSong.observe(this) { currentSong ->
