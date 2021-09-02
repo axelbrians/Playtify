@@ -27,19 +27,18 @@ class MusicPlayerNotificationListener(
         ongoing: Boolean
     ) {
         super.onNotificationPosted(notificationId, notification, ongoing)
-        Timber.d("notification $notification")
         mediaPlaybackService.apply {
-            Timber.d("onGoing $ongoing || isForegroundService $isForegroundService")
+//            Timber.d("onGoing $ongoing || isForegroundService $isForegroundService")
             if (ongoing && !isForegroundService) {
-                Timber.d("Starting service and notification")
+//                Timber.d("Starting service and notification")
                 ContextCompat.startForegroundService(
                     this,
                     Intent(applicationContext, this::class.java)
                 )
                 startForeground(NOTIFICATION_ID, notification)
                 isForegroundService = true
-            } else if (!ongoing && !isForegroundService){
-                Timber.d("Notification is now dismissible")
+            } else {
+//                Timber.d("Notification is now dismissible")
                 stopForeground(false)
             }
         }

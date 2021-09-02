@@ -7,18 +7,13 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.RequestManager
-import com.machina.playtify.R
 import com.machina.playtify.adapter.HomeSongAdapter
 import com.machina.playtify.databinding.FragmentHomeBinding
 import com.machina.playtify.model.Song
 import com.machina.playtify.model.Status
-import com.machina.playtify.player.isPlayEnabled
-import com.machina.playtify.player.isPlaying
-import com.machina.playtify.player.toSong
-import com.machina.playtify.viewmodels.HomeViewModel
+import com.machina.playtify.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
@@ -29,13 +24,13 @@ class HomeFragment: Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: HomeViewModel
+    private lateinit var viewModel: MainViewModel
 
     @Inject
     lateinit var glide: RequestManager
 
     @Inject
-    lateinit var mAdapter: HomeSongAdapter
+    lateinit var homeSongAdapter: HomeSongAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,7 +44,7 @@ class HomeFragment: Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        mAdapter.setOnSongClickListener { song ->
+        homeSongAdapter.setOnSongClickListener { song ->
             Timber.d("Song clicked $song")
             viewModel.playOrToggleSong(song)
         }
@@ -57,20 +52,20 @@ class HomeFragment: Fragment() {
 
     private fun setupRecycler() {
         binding.songRecycler.apply {
-            adapter = mAdapter
+            adapter = homeSongAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
     }
 
     private fun setupObserver() {
-        viewModel = ViewModelProvider(requireActivity())[HomeViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
 
         viewModel.mediaItems.observe(viewLifecycleOwner) { resource ->
             when (resource.status) {
                 Status.SUCCESS -> {
                     binding.progressCircular.isVisible = false
                     if (resource.data is List<Song>)
-                        mAdapter.songs = resource.data
+                        homeSongAdapter.songs = resource.data
                 }
                 Status.ERROR -> {
                     binding.progressCircular.isVisible = false

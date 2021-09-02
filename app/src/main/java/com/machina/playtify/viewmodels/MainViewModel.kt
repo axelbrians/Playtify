@@ -24,7 +24,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class MainViewModel @Inject constructor(
     private val musicServiceConnection: MusicServiceConnection
 ): ViewModel() {
 
@@ -34,6 +34,7 @@ class HomeViewModel @Inject constructor(
     val isConnected = musicServiceConnection.isConnected
     val networkError = musicServiceConnection.networkError
     val currentPlayingSong = musicServiceConnection.currentPlayingSong
+    val currentQueue = musicServiceConnection.currentQueue
     val playbackState = musicServiceConnection.playbackState
     val shuffleMode = musicServiceConnection.shuffleMode
     val repeatMode = musicServiceConnection.repeatMode

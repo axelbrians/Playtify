@@ -9,58 +9,67 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <ImageView
-        android:id="@+id/fragment_current_track_arrow_down"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="12dp"
-        android:src="@drawable/ic_baseline_keyboard_arrow_down_24"
-        app:layout_constraintBottom_toBottomOf="@+id/fragment_current_track_info_container"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/fragment_current_track_info_container"
-        app:tint="@color/white" />
-
-    <LinearLayout
-        android:id="@+id/fragment_current_track_info_container"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="52dp"
-        android:layout_marginTop="12dp"
-        android:orientation="vertical"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/fragment_current_track_appbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/fragment_current_track_playlist_source"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="playing from playlist"
-            android:textAlignment="center"
-            android:textAllCaps="true"
-            android:textSize="11sp" />
+        <ImageView
+            android:id="@+id/fragment_current_track_arrow_down"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="24dp"
+            android:src="@drawable/ic_baseline_keyboard_arrow_down_24"
+            app:layout_constraintBottom_toBottomOf="@+id/fragment_current_track_info_container"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/fragment_current_track_info_container"
+            app:tint="@color/white" />
 
-        <TextView
-            android:id="@+id/fragment_current_track_playlist_name"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:id="@+id/fragment_current_track_info_container"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="My Playlist"
-            android:textAlignment="center"
-            android:textAllCaps="true"
-            android:textSize="11sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+            android:layout_marginHorizontal="52dp"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    <ImageView
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@drawable/ic_baseline_more_vert_24"
-        android:layout_marginEnd="24dp"
-        app:layout_constraintBottom_toBottomOf="@+id/fragment_current_track_info_container"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/fragment_current_track_info_container"
-        app:tint="@color/white" />
+            <TextView
+                android:id="@+id/fragment_current_track_playlist_source"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="playing from playlist"
+                android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textSize="11sp" />
+
+            <TextView
+                android:id="@+id/fragment_current_track_playlist_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="My Playlist"
+                android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="24dp"
+            android:src="@drawable/ic_baseline_more_vert_24"
+            app:layout_constraintBottom_toBottomOf="@+id/fragment_current_track_info_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/fragment_current_track_info_container"
+            app:tint="@color/white" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <ImageView
         android:id="@+id/fragment_current_track_image"
@@ -68,11 +77,11 @@
         android:layout_height="0dp"
         android:layout_marginHorizontal="32dp"
         android:src="@color/green_active"
-        app:layout_constraintDimensionRatio="H,1:1"
         app:layout_constraintBottom_toTopOf="@+id/fragment_current_track_control_container"
+        app:layout_constraintDimensionRatio="H,1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fragment_current_track_info_container" />
+        app:layout_constraintTop_toBottomOf="@+id/fragment_current_track_appbar" />
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
