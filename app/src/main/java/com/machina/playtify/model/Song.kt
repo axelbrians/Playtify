@@ -13,7 +13,9 @@ data class Song(
 
     var imageUrl: String,
 
-    var songUrl: String
+    var songUrl: String,
+
+    var isCurrentlyPlaying: Boolean = false
 ) {
 
     companion object {

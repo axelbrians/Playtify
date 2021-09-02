@@ -157,7 +157,7 @@ class CurrentTrackFragment : Fragment() {
             }
         }
 
-        viewModel.shuffleMode.observe(viewLifecycleOwner) { shuffleMode ->
+        viewModel.repeatMode.observe(viewLifecycleOwner) { shuffleMode ->
             when (shuffleMode) {
                 SHUFFLE_MODE_ALL -> {
                     binding.fragmentCurrentTrackShuffle.setOnClickListener { viewModel.shuffleMode() }
