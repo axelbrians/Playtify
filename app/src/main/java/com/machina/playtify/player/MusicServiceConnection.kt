@@ -16,6 +16,7 @@ import androidx.lifecycle.MutableLiveData
 import com.machina.playtify.core.Constants.NETWORK_ERROR
 import com.machina.playtify.model.Event
 import com.machina.playtify.model.Resource
+import com.machina.playtify.model.Song
 import timber.log.Timber
 
 class MusicServiceConnection(
@@ -34,8 +35,8 @@ class MusicServiceConnection(
     private val _currentPlayingSong = MutableLiveData<MediaMetadataCompat?>()
     val currentPlayingSong: LiveData<MediaMetadataCompat?> = _currentPlayingSong
 
-    private val _currentQueue = MutableLiveData<List<MediaSessionCompat.QueueItem>>()
-    val currentQueue: LiveData<List<MediaSessionCompat.QueueItem>> = _currentQueue
+    private val _currentQueue = MutableLiveData<List<Song>>()
+    val currentQueue: LiveData<List<Song>> = _currentQueue
 
     private val _shuffleMode = MutableLiveData<Int>()
     val shuffleMode: LiveData<Int> = _shuffleMode
@@ -95,8 +96,32 @@ class MusicServiceConnection(
     private inner class MediaControllerCallback: MediaControllerCompat.Callback() {
         override fun onQueueChanged(queue: MutableList<MediaSessionCompat.QueueItem>?) {
             super.onQueueChanged(queue)
-            queue?.let {  _currentQueue.postValue(it) }
-            Timber.d("currentQueue $queue")
+            val repeat = mediaController.repeatMode
+            val value = mediaController.metadata?.toSong()
+            var songs = queue?.map { it.toSong() }?.toMutableList()
+            if (value != null && songs != null) {
+                val tempList = mutableListOf<Song>()
+                var currentIndex = songs.indexOfFirst { it.id == value.id }
+                if (currentIndex == -1) currentIndex = 0
+
+                when (repeat) {
+                    PlaybackStateCompat.REPEAT_MODE_NONE -> {
+                        tempList.addAll(songs.subList(currentIndex, songs.size))
+                    }
+                    else -> {
+                        tempList.addAll(songs.subList(currentIndex, songs.size))
+                        tempList.addAll(songs.subList(0, currentIndex))
+                    }
+                }
+                songs = tempList
+            }
+            songs?.let {
+                _currentQueue.postValue(it)
+                return
+            }
+            queue?.let { tempQueue ->
+                _currentQueue.postValue(tempQueue.map { it.toSong() })
+            }
         }
 
         override fun onRepeatModeChanged(repeatMode: Int) {

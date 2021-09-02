@@ -57,15 +57,15 @@ class CurrentQueueFragment : Fragment() {
 
     private fun setupObserver() {
         mainViewModel.currentQueue.observe(viewLifecycleOwner) { currentQueue ->
-            songQueueAdapter.songs = currentQueue.map { it.toSong() }
+            songQueueAdapter.songs = currentQueue
         }
 
         mainViewModel.repeatMode.observe(viewLifecycleOwner) { repeatMode ->
             songQueueAdapter.repeatMode = repeatMode
         }
 
-        mainViewModel.currentPlayingSong.observe(viewLifecycleOwner) { currentPlayingSong ->
-            songQueueAdapter.currentPlayingSong = currentPlayingSong
-        }
+//        mainViewModel.currentPlayingSong.observe(viewLifecycleOwner) { currentPlayingSong ->
+//            songQueueAdapter.currentPlayingSong = currentPlayingSong
+//        }
     }
 }
