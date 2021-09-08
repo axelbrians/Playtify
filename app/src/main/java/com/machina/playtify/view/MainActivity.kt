@@ -15,6 +15,7 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.machina.playtify.R
 import com.machina.playtify.databinding.ActivityMainBinding
+import com.machina.playtify.decoration.LastItemBottomSpaceDecoration
 import com.machina.playtify.player.isPlayEnabled
 import com.machina.playtify.player.isPlaying
 import com.machina.playtify.player.toSong
