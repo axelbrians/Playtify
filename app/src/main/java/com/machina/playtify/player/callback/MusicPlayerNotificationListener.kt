@@ -28,7 +28,7 @@ class MusicPlayerNotificationListener(
     ) {
         super.onNotificationPosted(notificationId, notification, ongoing)
         mediaPlaybackService.apply {
-            Timber.d("onGoing $ongoing")
+           Timber.d("onGoing $ongoing || isForegroundService $isForegroundService")
             if (ongoing && !isForegroundService) {
 //                Timber.d("Starting service and notification")
                 ContextCompat.startForegroundService(
@@ -39,7 +39,6 @@ class MusicPlayerNotificationListener(
                 isForegroundService = true
             } else if (!ongoing){
                 Timber.d("Notification is now dismissible")
-                stopForeground(false)
             }
         }
     }
