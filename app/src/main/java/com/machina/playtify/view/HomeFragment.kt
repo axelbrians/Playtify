@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.RequestManager
 import com.machina.playtify.adapter.HomeSongAdapter
 import com.machina.playtify.databinding.FragmentHomeBinding
+import com.machina.playtify.decoration.LastItemBottomSpaceDecoration
 import com.machina.playtify.model.Song
 import com.machina.playtify.model.Status
 import com.machina.playtify.viewmodels.MainViewModel
@@ -31,6 +32,9 @@ class HomeFragment: Fragment() {
 
     @Inject
     lateinit var homeSongAdapter: HomeSongAdapter
+
+    @Inject
+    lateinit var lastItemBottomSpaceDecoration: LastItemBottomSpaceDecoration
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,6 +58,7 @@ class HomeFragment: Fragment() {
         binding.songRecycler.apply {
             adapter = homeSongAdapter
             layoutManager = LinearLayoutManager(requireContext())
+            addItemDecoration(lastItemBottomSpaceDecoration)
         }
     }
 
@@ -75,10 +80,19 @@ class HomeFragment: Fragment() {
                 }
             }
         }
+
+//        viewModel.currentPlayingSong.observe(viewLifecycleOwner) { currentPlayingSong ->
+//            if (currentPlayingSong != null) {
+//                binding.songRecycler.addItemDecoration(lastItemBottomSpaceDecoration)
+//            } else {
+//                binding.songRecycler.removeItemDecoration(lastItemBottomSpaceDecoration)
+//            }
+//        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        binding.songRecycler.removeItemDecoration(lastItemBottomSpaceDecoration)
         _binding = null
     }
 }
