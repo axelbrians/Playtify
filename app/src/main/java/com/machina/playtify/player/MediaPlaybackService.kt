@@ -28,8 +28,6 @@ import kotlinx.coroutines.*
 import timber.log.Timber
 import javax.inject.Inject
 
-
-
 @AndroidEntryPoint
 class MediaPlaybackService: MediaBrowserServiceCompat() {
 

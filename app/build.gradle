@@ -85,6 +85,9 @@ dependencies {
     // Palette
     implementation 'androidx.palette:palette-ktx:1.0.0'
 
+    // Viewpager
+    implementation "androidx.viewpager2:viewpager2:1.0.0"
+
     // Logging
     implementation 'com.jakewharton.timber:timber:5.0.1'
 }

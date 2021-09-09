@@ -9,13 +9,16 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.machina.playtify.R
+import com.machina.playtify.adapter.SliderTrackPagerAdapter
 import com.machina.playtify.databinding.ActivityMainBinding
 import com.machina.playtify.decoration.LastItemBottomSpaceDecoration
+import com.machina.playtify.model.Song
 import com.machina.playtify.player.isPlayEnabled
 import com.machina.playtify.player.isPlaying
 import com.machina.playtify.player.toSong
@@ -30,9 +33,11 @@ class MainActivity : AppCompatActivity() {
     private val binding by lazy(LazyThreadSafetyMode.NONE) {
         ActivityMainBinding.inflate(layoutInflater)
     }
+    private val currentTracks = listOf<Song>()
 
     private lateinit var viewModel: MainViewModel
     private lateinit var navController: NavController
+    private lateinit var sliderAdapter: SliderTrackPagerAdapter
 
     @Inject
     lateinit var glide: RequestManager
@@ -63,6 +68,7 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when(destination.id) {
                 R.id.homeFragment -> {
+                    viewModel.repeatMode.value?.let { sliderAdapter.repeatMode = it }
                     showBottomBar()
                     val currentSong = viewModel.currentPlayingSong.value
                     if (currentSong != null) {
@@ -76,6 +82,18 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        sliderAdapter = SliderTrackPagerAdapter()
+        binding.currentTrackViewpager.apply {
+            adapter = sliderAdapter
+            registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    if (sliderAdapter.songs.isNotEmpty()) {
+                        viewModel.playOrToggleSong(sliderAdapter.songs[position])
+                    }
+                }
+            })
+        }
     }
 
     private fun setupObserver() {
@@ -87,6 +105,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        viewModel.currentQueue.observe(this) { currentQueue ->
+            sliderAdapter.songs = currentQueue
+        }
+
+        viewModel.repeatMode.observe(this) { repeatMode ->
+            sliderAdapter.repeatMode = repeatMode
+        }
+
         viewModel.currentPlayingSong.observe(this) { currentSong ->
             if (currentSong != null) {
                 if (navController.currentDestination?.id == R.id.homeFragment) {
@@ -94,6 +120,9 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     binding.currentTrackBottomBar.isVisible = false
                 }
+                val index = sliderAdapter.songs.indexOf(currentSong.toSong())
+                Timber.d("sliding to $index")
+                binding.currentTrackViewpager.setCurrentItem(index, true)
             } else {
                 binding.currentTrackBottomBar.isVisible = false
             }
@@ -135,7 +164,7 @@ class MainActivity : AppCompatActivity() {
                 override fun onLoadCleared(placeholder: Drawable?) {  }
             })
         binding.currentTrackBottomBar.isVisible = true
-        binding.currentTrackTitle.text = currentSong.description?.title.toString()
-        binding.currentTrackArtist.text = currentSong.description?.subtitle.toString()
+//        binding.currentTrackTitle.text = currentSong.description?.title.toString()
+//        binding.currentTrackArtist.text = currentSong.description?.subtitle.toString()
     }
 }

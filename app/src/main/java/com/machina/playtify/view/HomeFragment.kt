@@ -49,7 +49,7 @@ class HomeFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         homeSongAdapter.setOnSongClickListener { song ->
-            Timber.d("Song clicked $song")
+//            Timber.d("Song clicked $song")
             viewModel.playOrToggleSong(song)
         }
     }

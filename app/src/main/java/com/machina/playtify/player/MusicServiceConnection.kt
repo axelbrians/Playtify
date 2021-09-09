@@ -103,16 +103,20 @@ class MusicServiceConnection(
 
         override fun onQueueChanged(queue: MutableList<MediaSessionCompat.QueueItem>?) {
             super.onQueueChanged(queue)
-            updateCurrentQueue(queue)
+            _currentQueue.postValue(queue?.map { it.toSong() })
+//            updateCurrentQueue(queue)
+            var newQueues = ""
+            queue?.forEach {
+                newQueues = "$newQueues | ${it.description.title}"
+            }
+            Timber.d("callback queue $newQueues")
         }
 
         private fun updateCurrentQueue(queue: MutableList<MediaSessionCompat.QueueItem>?) {
             val repeat = mediaController.repeatMode
             val value = mediaController.metadata?.toSong()
             var songs = queue?.map { it.toSong() }?.toMutableList()
-            songs?.forEach {
-                Timber.d("oldQueue ${it.title}")
-            }
+//            logQueues("old", songs)
             if (value != null && songs != null) {
                 val tempList = mutableListOf<Song>()
                 var currentIndex = songs.indexOfFirst { it.id == value.id }
@@ -129,16 +133,24 @@ class MusicServiceConnection(
                 }
                 songs = tempList
             }
-            songs?.forEach {
-                Timber.d("newQueue ${it.title}")
-            }
+//            logQueues("new", songs)
             songs?.let {
+//                Timber.d("return new queue at songs")
                 _currentQueue.postValue(it)
                 return
             }
             queue?.let { tempQueue ->
+//                Timber.d("return new queue queue")
                 _currentQueue.postValue(tempQueue.map { it.toSong() })
             }
+        }
+
+        private fun logQueues(tag: String, queues: List<Song>?) {
+            var newQueues = ""
+            queues?.forEach {
+                newQueues = "$newQueues | ${it.title}"
+            }
+            Timber.d("$tag $newQueues")
         }
 
         override fun onRepeatModeChanged(repeatMode: Int) {

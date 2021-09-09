@@ -82,10 +82,10 @@ class SongQueueAdapter @Inject constructor(
     }
 
     override fun getItemCount(): Int {
-        if (repeatMode == PlaybackStateCompat.SHUFFLE_MODE_NONE) {
-            return songs.size
+        return if (repeatMode == PlaybackStateCompat.SHUFFLE_MODE_NONE) {
+            songs.size
         } else {
-            return Int.MAX_VALUE
+            Int.MAX_VALUE
         }
     }
 
